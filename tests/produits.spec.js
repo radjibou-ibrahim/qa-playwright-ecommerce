@@ -1,21 +1,31 @@
 const { test, expect } = require("@playwright/test");
 const PageConnexion = require("../pages/PageConnexion");
 const PageProduits = require("../pages/PageProduits");
+const PagePanier = require("../pages/PagePanier");
+const PageCheckout = require("../pages/PageCheckout");
+const PageRecapitulatif = require("../pages/PageRecapitulatif");
 
 test.describe("Page produits", () => {
   let pageProduits;
+  let pagePanier;
+  let pageCheckout;
+  let pageRecapitulatif;
 
   test.beforeEach(async ({ page }) => {
     const pageConnexion = new PageConnexion(page);
+
     pageProduits = new PageProduits(page);
+    pagePanier = new PagePanier(page);
+    pageCheckout = new PageCheckout(page);
+    pageRecapitulatif = new PageRecapitulatif(page);
 
     // Accès au site
     await page.goto("https://www.saucedemo.com/");
 
-    // Connexion utilisateur valide
+    // Connexion
     await pageConnexion.seConnecter("standard_user", "secret_sauce");
 
-    // Vérification que la connexion est réussie
+    // Vérification de la connexion
     await expect(page).toHaveURL(/.*inventory.*/);
   });
 
@@ -48,7 +58,7 @@ test.describe("Page produits", () => {
 
     await pageProduits.boutonSupprimerBackpack.click();
 
-    await expect(pageProduits.compteurPanier).toHaveCount(0);
+    await expect(pageProduits.compteurPanier).not.toBeVisible();
   });
 
   test("Accès au panier après ajout du produit Sauce Labs Backpack", async ({
@@ -61,5 +71,63 @@ test.describe("Page produits", () => {
     await pageProduits.boutonPanier.click();
 
     await expect(page).toHaveURL(/cart/);
+  });
+
+  test("Vérification du produit Backpack dans le panier", async () => {
+    await pageProduits.boutonAjouterBackpack.click();
+
+    await pageProduits.boutonPanier.click();
+
+    await expect(pagePanier.nomProduitBackpack).toBeVisible();
+
+    await expect(pagePanier.prixProduitBackpack).toBeVisible();
+  });
+
+  test("Accès au checkout après ajout du Backpack", async ({ page }) => {
+    await pageProduits.boutonAjouterBackpack.click();
+
+    await pageProduits.boutonPanier.click();
+
+    await expect(page).toHaveURL(/cart/);
+
+    await page.locator('[data-test="checkout"]').click();
+
+    await expect(page).toHaveURL(/checkout-step-one/);
+  });
+
+  test("Remplissage des informations client au checkout", async ({ page }) => {
+    await pageProduits.boutonAjouterBackpack.click();
+
+    await pageProduits.boutonPanier.click();
+
+    await page.locator('[data-test="checkout"]').click();
+
+    await pageCheckout.champPrenom.fill("Guegui");
+    await pageCheckout.champNom.fill("Rajab");
+    await pageCheckout.champCodePostal.fill("12345");
+
+    await expect(pageCheckout.champPrenom).toHaveValue("Guegui");
+
+    await expect(pageCheckout.champNom).toHaveValue("Rajab");
+
+    await expect(pageCheckout.champCodePostal).toHaveValue("12345");
+  });
+
+  test("Finalisation de la commande", async ({ page }) => {
+    await pageProduits.boutonAjouterBackpack.click();
+
+    await pageProduits.boutonPanier.click();
+
+    await page.locator('[data-test="checkout"]').click();
+
+    await pageCheckout.champPrenom.fill("Guegui");
+    await pageCheckout.champNom.fill("Rajab");
+    await pageCheckout.champCodePostal.fill("12345");
+
+    await pageCheckout.boutonContinuer.click();
+
+    await pageRecapitulatif.boutonTerminer.click();
+
+    await expect(pageRecapitulatif.titreConfirmation).toBeVisible();
   });
 });

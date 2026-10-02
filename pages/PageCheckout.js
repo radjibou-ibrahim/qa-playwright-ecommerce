@@ -2,17 +2,41 @@ class PageCheckout {
   constructor(page) {
     this.page = page;
 
-    // Informations client
-    this.champPrenom = page.locator('[data-test="firstName"]');
-    this.champNom = page.locator('[data-test="lastName"]');
-    this.champCodePostal = page.locator('[data-test="postalCode"]');
+    // =========================
+    // Formulaire Checkout
+    // =========================
 
-    // Boutons
-    this.boutonContinuer = page.locator('[data-test="continue"]');
-    this.boutonAnnuler = page.locator('[data-test="cancel"]');
+    this.champPrenom = page.locator("#first-name");
+    this.champNom = page.locator("#last-name");
+    this.champCodePostal = page.locator("#postal-code");
 
-    // Messages d'erreur
+    // Bouton Continuer
+    this.boutonContinuer = page.locator("#continue");
+
+    // Message d'erreur
     this.messageErreur = page.locator('[data-test="error"]');
+
+    // =========================
+    // Récapitulatif de commande
+    // =========================
+
+    // Conteneur de la page récapitulative
+    this.pageRecapitulatif = page.locator(
+      '[data-test="checkout-summary-container"]',
+    );
+
+    // Titre "Checkout: Overview"
+    this.titreRecapitulatif = page.getByText("Checkout: Overview", {
+      exact: true,
+    });
+
+    // Produit Backpack
+    this.nomProduitBackpack = page.getByText("Sauce Labs Backpack", {
+      exact: true,
+    });
+
+    // Prix du Backpack
+    this.prixProduitBackpack = page.getByText("$29.99", { exact: true });
   }
 }
 

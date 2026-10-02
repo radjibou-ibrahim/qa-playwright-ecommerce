@@ -4,7 +4,10 @@ const PageConnexion = require("../pages/PageConnexion");
 test("Connexion réussie avec un utilisateur valide", async ({ page }) => {
   const pageConnexion = new PageConnexion(page);
 
-  await page.goto("https://www.saucedemo.com/");
+  await page.goto("https://www.saucedemo.com/", {
+    waitUntil: "domcontentloaded",
+    timeout: 60000,
+  });
 
   await pageConnexion.seConnecter("standard_user", "secret_sauce");
 
@@ -14,7 +17,10 @@ test("Connexion réussie avec un utilisateur valide", async ({ page }) => {
 test("Connexion refusée avec un mot de passe incorrect", async ({ page }) => {
   const pageConnexion = new PageConnexion(page);
 
-  await page.goto("https://www.saucedemo.com/");
+  await page.goto("https://www.saucedemo.com/", {
+    waitUntil: "domcontentloaded",
+    timeout: 60000,
+  });
 
   await pageConnexion.seConnecter("standard_user", "wrong_password");
 
@@ -27,7 +33,10 @@ test("Connexion refusée avec un mot de passe incorrect", async ({ page }) => {
 test("Connexion refusée avec un username vide", async ({ page }) => {
   const pageConnexion = new PageConnexion(page);
 
-  await page.goto("https://www.saucedemo.com/");
+  await page.goto("https://www.saucedemo.com/", {
+    waitUntil: "domcontentloaded",
+    timeout: 60000,
+  });
 
   await pageConnexion.seConnecter("", "secret_sauce");
 
@@ -40,7 +49,10 @@ test("Connexion refusée avec un username vide", async ({ page }) => {
 test("Connexion refusée avec un mot de passe vide", async ({ page }) => {
   const pageConnexion = new PageConnexion(page);
 
-  await page.goto("https://www.saucedemo.com/");
+  await page.goto("https://www.saucedemo.com/", {
+    waitUntil: "domcontentloaded",
+    timeout: 60000,
+  });
 
   await pageConnexion.seConnecter("standard_user", "");
 

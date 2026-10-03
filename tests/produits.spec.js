@@ -14,11 +14,12 @@ test.describe("Page produits", () => {
     pagePanier = new PagePanier(page);
     pageCheckout = new PageCheckout(page);
 
-    await page.goto("https://www.saucedemo.com/inventory.html", {
-      waitUntil: "domcontentloaded",
-    });
+    await page.goto("/inventory.html");
 
     await expect(page).toHaveURL(/.*inventory.*/);
+
+    // Attendre que la page produits soit réellement disponible
+    await expect(pageProduits.titreProduits).toBeVisible();
   });
 
   test("Affichage de la page produits après connexion", async () => {

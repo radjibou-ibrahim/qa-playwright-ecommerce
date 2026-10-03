@@ -1,4 +1,5 @@
-const { test, expect } = require("../fixtures/test");
+const { test, expect } = require("@playwright/test");
+
 const PageProduits = require("../pages/PageProduits");
 const PagePanier = require("../pages/PagePanier");
 const PageCheckout = require("../pages/PageCheckout");
@@ -8,10 +9,16 @@ test.describe("Page produits", () => {
   let pagePanier;
   let pageCheckout;
 
-  test.beforeEach(async ({ pageConnectee }) => {
-    pageProduits = new PageProduits(pageConnectee);
-    pagePanier = new PagePanier(pageConnectee);
-    pageCheckout = new PageCheckout(pageConnectee);
+  test.beforeEach(async ({ page }) => {
+    pageProduits = new PageProduits(page);
+    pagePanier = new PagePanier(page);
+    pageCheckout = new PageCheckout(page);
+
+    await page.goto("https://www.saucedemo.com/inventory.html", {
+      waitUntil: "domcontentloaded",
+    });
+
+    await expect(page).toHaveURL(/.*inventory.*/);
   });
 
   test("Affichage de la page produits après connexion", async () => {
@@ -24,9 +31,7 @@ test.describe("Page produits", () => {
 
   test("Vérification des informations du produit Sauce Labs Backpack", async () => {
     await expect(pageProduits.produitBackpack).toBeVisible();
-
     await expect(pageProduits.prixBackpack).toBeVisible();
-
     await expect(pageProduits.descriptionBackpack).toBeVisible();
   });
 
@@ -62,7 +67,6 @@ test.describe("Page produits", () => {
     await pageProduits.boutonPanier.click();
 
     await expect(pagePanier.nomProduitBackpack).toBeVisible();
-
     await expect(pagePanier.prixProduitBackpack).toBeVisible();
   });
 
@@ -93,6 +97,7 @@ test.describe("Page produits", () => {
 
     await pageCheckout.boutonContinuer.click();
 
+    await expect(pageCheckout.pageRecapitulatif).toBeVisible();
     await expect(pageCheckout.titreRecapitulatif).toBeVisible();
   });
 
@@ -172,6 +177,7 @@ test.describe("Page produits", () => {
 
     await pageCheckout.boutonContinuer.click();
 
+    await expect(pageCheckout.pageRecapitulatif).toBeVisible();
     await expect(pageCheckout.titreRecapitulatif).toBeVisible();
   });
 });

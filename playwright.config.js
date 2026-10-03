@@ -2,47 +2,47 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * @see https://playwright.dev/docs/test-configuration
+ * Configuration Playwright
  */
 export default defineConfig({
   testDir: "./tests",
 
-  // Exécution parallèle des tests
+  /* Exécution parallèle */
   fullyParallel: true,
 
-  // Empêche test.only() sur CI
+  /* Échec du build CI si test.only est présent */
   forbidOnly: !!process.env.CI,
 
-  // Retry uniquement sur CI
+  /* Retry uniquement sur CI */
   retries: process.env.CI ? 2 : 0,
 
-  // Un seul worker sur CI, exécution parallèle en local
+  /* Un seul worker sur CI */
   workers: process.env.CI ? 1 : undefined,
 
-  // Rapport HTML Playwright
-  reporter: [
-    [
-      "html",
-      {
-        open: "never",
-      },
-    ],
-  ],
+  /* Rapport HTML */
+  reporter: "html",
 
-  // Configuration commune à tous les tests
+  /* Configuration commune */
   use: {
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
   },
 
-  // Navigateurs utilisés pour les tests
+  /* Projets */
   projects: [
+    {
+      name: "setup",
+      testMatch: /auth\.setup\.spec\.js/,
+    },
+
     {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
       },
+      dependencies: ["setup"],
     },
 
     {

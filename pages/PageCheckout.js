@@ -36,7 +36,19 @@ class PageCheckout {
     });
 
     // Prix du Backpack
-    this.prixProduitBackpack = page.getByText("$29.99", { exact: true });
+    this.prixProduitBackpack = page.getByText("$29.99", {
+      exact: true,
+    });
+
+    // =========================
+    // Finalisation de la commande
+    // =========================
+
+    // Bouton Finish
+    this.boutonFinaliser = page.locator("#finish");
+
+    // Message de confirmation
+    this.messageConfirmation = page.locator('[data-test="complete-header"]');
   }
 }
 
